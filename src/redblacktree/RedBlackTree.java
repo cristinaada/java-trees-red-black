@@ -45,23 +45,59 @@ public class RedBlackTree<K extends Comparable<? super K>, V> {
   }
 
   private void insertCaseOne(Node<K, V> current) {
-    throw new RuntimeException("TODO: implement insertion case 1");
+    if (current.getParent() != null) {
+      insertCaseTwo(current);
+    } else {
+      current.setBlack();
+    }
   }
 
   private void insertCaseTwo(Node<K, V> current) {
-    throw new RuntimeException("TODO: implement insertion case 2");
+    if (!current.getParent().isBlack()) {
+      insertCaseThree(current);
+    }
   }
 
   private void insertCaseThree(Node<K, V> current) {
-    throw new RuntimeException("TODO: implement insertion case 3");
+    if (current.getUncle() != null) {
+      if (current.getUncle().isRed()) {
+        current.getParent().setBlack();
+        current.getUncle().setBlack();
+        current.getGrandparent().setRed();
+        insertCaseOne(current.getGrandparent());
+      } else {
+        insertCaseFour(current);
+      }
+    } else {
+      insertCaseFour(current);
+    }
   }
 
   private void insertCaseFour(Node<K, V> current) {
-    throw new RuntimeException("TODO: implement insertion case 4");
+    if (current.getParent().isLeftChild() && current.isRightChild()) {
+      current.getParent().rotateLeft();
+      insertCaseFive(current.getLeft());
+    } else if (current.getParent().isRightChild() && current.isLeftChild()) {
+        current.getParent().rotateRight();
+        insertCaseFive(current.getRight());
+      } else {
+        insertCaseFive(current);
+      }
   }
 
   private void insertCaseFive(Node<K, V> current) {
-    throw new RuntimeException("TODO: implement insertion case 5");
+    current.getParent().setBlack();
+    current.getGrandparent().setRed();
+    boolean grandIsRoot = root == current.getGrandparent();
+    Node temp;
+    if (current.isLeftChild()) {
+      temp = current.getGrandparent().rotateRight();
+    } else {
+      temp = current.getGrandparent().rotateLeft();
+    }
+    if(grandIsRoot) {
+      root = temp;
+    }
   }
 
   private Tuple<Node<K, V>, Node<K, V>> findNode(K key) {
